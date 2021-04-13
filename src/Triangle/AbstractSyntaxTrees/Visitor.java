@@ -32,7 +32,8 @@ public interface Visitor {
   public abstract Object visitWhileCommand(WhileCommand ast, Object o);
 
   public abstract Object visitRunCommand(RunCommand ast, Object o);
-  public abstract Object visitPutCommand(PutCommand ast, Object o);
+  public abstract Object visitPutyCommand(PutyCommand ast, Object o);
+  public abstract Object visitForCommand(ForCommand ast, Object o);
 
 
   // Expressions
@@ -158,9 +159,4 @@ public interface Visitor {
 }
 /*
     Object visitRepeatCommand(RepeatCommand repeatCommand, Object o);
-
-
-
-  Object visitForCommand(ForCommand forCommand, Object o);
-}
 */

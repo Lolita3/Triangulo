@@ -34,25 +34,22 @@ public final class Checker implements Visitor {
       reporter.reportError ("assignment incompatibilty", "", ast.position);
     return null;
   }
-  public Object visitPutCommand(PutCommand ast, Object o) {
-    TypeDenoter vType = (TypeDenoter) ast.VN.visit(this, null);
-    TypeDenoter eType = (TypeDenoter) ast.C1.visit(this, null);
-    TypeDenoter dType = (TypeDenoter) ast.TD.visit(this, null);
-    TypeDenoter eType = (TypeDenoter) ast.C2.visit(this, null);
-    if (!ast.VN.variable)
-      reporter.reportError ("LHS of assignment is not a variable", "", ast.VN.position);
-    if (!ast.C1.variable)
-      reporter.reportError ("LHS of assignment is not a variable", "", ast.C1.position);
-    if (!ast.C2.variable)
-      reporter.reportError ("LHS of assignment is not a variable", "", ast.C2.position);
-    if (!ast.TD.variable)
-      reporter.reportError ("LHS of assignment is not a variable", "", ast.TD.position);
-    if (! eType.equals(vType)) 
 
-      reporter.reportError ("assignment incompatibilty", "", ast.position);
+  public Object visitPutyCommand(PutyCommand ast, Object o) {
+    TypeDenoter eType = (TypeDenoter) ast.VN.visit(this, null);
+    TypeDenoter e1Type = (TypeDenoter) ast.C1.visit(this, null);
+    TypeDenoter e2Type = (TypeDenoter) ast.C2.visit(this, null);
+
+    if (! eType.equals(StdEnvironment.integerType))
+      reporter.reportError("Integer literal expected here", "", ast.VN.position);
+    if (! e1Type.equals(StdEnvironment.integerType))
+      reporter.reportError("Integer literal expected here", "", ast.C1.position);
+    if (! e2Type.equals(StdEnvironment.integerType))
+      reporter.reportError("Integer literal expected here", "", ast.C2.position);
+
     return null;
-
   }
+
 
   public Object visitCallCommand(CallCommand ast, Object o) {
 
@@ -103,6 +100,23 @@ public final class Checker implements Visitor {
     ast.C.visit(this, null);
     return null;
   }
+  public Object visitForCommand(ForCommand ast, Object o) {
+    TypeDenoter vType = (TypeDenoter) ast.V.visit(this, null);
+    if (! ast.V.variable)
+      reporter.reportError("identifier is not a variable", "", ast.V.position);
+    else if (! (vType instanceof IntTypeDenoter))
+      reporter.reportError("Integer expected here", "", ast.V.position);
+    TypeDenoter e1Type = (TypeDenoter) ast.E1.visit(this, null);
+    if (! e1Type.equals(vType))
+      reporter.reportError("wrong type for starting expression", "", ast.E1.position);
+    TypeDenoter e2Type = (TypeDenoter) ast.E2.visit(this, null);
+    if (! e2Type.equals(vType))
+      reporter.reportError("wrong type for ending expression", "", ast.E2.position);
+    ast.C.visit(this, null);
+    return null;
+  }
+
+
     public Object visitRunCommand(RunCommand ast, Object o) {
     TypeDenoter eType = (TypeDenoter) ast.IL.visit(this, null);
     if (! eType.equals(StdEnvironment.integerType))
@@ -706,10 +720,10 @@ public final class Checker implements Visitor {
   }
 */
 
-
+/*
   @Override
   public Object visitPutCommand(PutCommand ast, Object obj) {
-    return
+    return null;
   }
 /*
   @Override

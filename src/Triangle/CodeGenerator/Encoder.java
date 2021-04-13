@@ -92,6 +92,26 @@ public final class Encoder implements Visitor {
     emit(Machine.JUMPIFop, Machine.trueRep, Machine.CBr, loopAddr);
     return null;
   }
+  public Object visitForCommand(ForCommand ast, Object o) {
+    Frame frame = (Frame) o;
+    int jumpAddr, loopAddr;
+
+    ast.E1.visit(this, frame);
+    encodeStore(ast.V, new Frame (frame, 1), 1);
+    jumpAddr = nextInstrAddr;
+    emit(Machine.JUMPop, 0, Machine.CBr, 0);
+    loopAddr = nextInstrAddr;
+    ast.C.visit(this, frame);
+    encodeFetch(ast.V, frame, 1);
+    emit(Machine.CALLop, Machine.SBr, Machine.PBr, Machine.succDisplacement);
+    encodeStore(ast.V, new Frame (frame, 1), 1);
+    patch(jumpAddr, nextInstrAddr);
+    encodeFetch(ast.V, frame, 1);
+    ast.E2.visit(this, frame);
+    emit(Machine.CALLop, Machine.SBr, Machine.PBr, Machine.leDisplacement);
+    emit(Machine.JUMPIFop, Machine.trueRep, Machine.CBr, loopAddr);
+    return null;
+  }
 
 
   // Expressions
@@ -664,9 +684,17 @@ public final class Encoder implements Visitor {
   }
 
   @Override
-  public Object visitPutCommand(PutCommand putCommand, Object o) {
-    return null;
-  }
+  public Object visitPutyCommand(PutyCommand ast, Object o) {
+    Frame frame = (Frame) o;
+    Integer valSize = (Integer) ast.C1.visit(this, frame);
+    Integer valSize1 = (Integer) ast.C2.visit(this, frame);
+    encodeStore(ast.VN, new Frame (frame, valSize.intValue()),
+            valSize.intValue());
+      return null;
+    }
+
+
+
   /*
     @Override
     public Object visitForCommand(ForCommand forCommand, Object o) {

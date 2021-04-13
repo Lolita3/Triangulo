@@ -311,20 +311,17 @@ public class LayoutVisitor implements Visitor {
   public Object visitRunCommand(RunCommand ast, Object obj) {
     return layoutBinary("RunCom.", ast.IL, ast.C);
   }
+  public Object visitForCommand(ForCommand ast, Object obj) {
+    return layoutQuaternary("ForCom.", ast.V, ast.E1, ast.E2, ast.C);
+  }
 
 
 
     @Override
-    public Object visitPutCommand(PutCommand ast, Object obj) {
-      return layoutQuaternary("PutCom.", ast.VN, ast.C1, ast.C2, ast.TD);
+    public Object visitPutyCommand(PutyCommand ast, Object o) { return layoutTernary("PutyCom.", ast.VN, ast.C1, ast.C2); }
 
-    }
-  /*
-    @Override
-    public Object visitForCommand(ForCommand forCommand, Object o) {
-      return null;
-    }
-  */
+
+
   private DrawingTree layoutCaption (String name) {
     int w = fontMetrics.stringWidth(name) + 4;
     int h = fontMetrics.getHeight() + 4;
