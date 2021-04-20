@@ -87,11 +87,13 @@ public final class Encoder implements Visitor {
     emit(Machine.JUMPop, 0, Machine.CBr, 0);
     loopAddr = nextInstrAddr;
     ast.C.visit(this, frame);
-    patch(jumpAddr, nextInstrAddr);
+    patch(jumpAddr, nextInstrAddr); // Escribe el codigo en el TAM
     ast.E.visit(this, frame);
     emit(Machine.JUMPIFop, Machine.trueRep, Machine.CBr, loopAddr);
+
     return null;
   }
+
   public Object visitForCommand(ForCommand ast, Object o) {
     Frame frame = (Frame) o;
     int jumpAddr, loopAddr;
@@ -680,19 +682,41 @@ public final class Encoder implements Visitor {
 */
   @Override
   public Object visitRunCommand(RunCommand ast, Object o) {
+    Frame frame = (Frame) o;
+    int jumpAddr, loopAddr;
+    jumpAddr = nextInstrAddr;
+    emit(Machine.JUMPop, 0, Machine.CBr, 0);
+    loopAddr = nextInstrAddr;
+    emit(Machine.LOADLop, 0,0 ,Integer.parseInt(ast.IL.spelling));
+    patch(jumpAddr, nextInstrAddr);
+    ast.C.visit(this, frame);
+    emit(Machine.CALLIop,Machine.LBr,Machine.PBr,Machine.predDisplacement);
+    emit(Machine.JUMPIFop, Machine.trueRep, Machine.CBr, loopAddr);
     return null;
   }
 
   @Override
   public Object visitPutyCommand(PutyCommand ast, Object o) {
+    return null;
+  }
+
+
+  /*
+  @Override
+  public Object visitPutyCommand(PutyCommand ast, Object o) {
     Frame frame = (Frame) o;
+    int jumpAddr = nextInstrAddr;
+    Integer valSize;
+    Integer valSize1;
     Integer valSize = (Integer) ast.C1.visit(this, frame);
     Integer valSize1 = (Integer) ast.C2.visit(this, frame);
     encodeStore(ast.VN, new Frame (frame, valSize.intValue()),
             valSize.intValue());
-      return null;
+    encodeStore(ast.VN, new Frame (frame, valSize1.intValue()),
+            valSize1.intValue());
+      return valSize1,valSize;
     }
-
+*/
 
 
   /*

@@ -31,7 +31,7 @@ import Triangle.TreeDrawer.Drawer;
 public class Compiler {
 
     /** The filename for the object program, normally obj.tam. */
-    static String objectName = "c:\\data\\ejemplo.tam";
+    static String objectName = "c:\\data\\run.tri";
 
     private static Scanner scanner;
     private static Parser parser;
